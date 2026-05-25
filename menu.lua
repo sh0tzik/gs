@@ -102,36 +102,18 @@
         }, 
     }
 
-    -- Gamesense RGB Bar Animation
-    local rgb_bar_data = {
-        instances = {},
-        running = true,
-        speed = 1.5,
+    -- Skeet-style colors
+    local skeet_colors = {
+        blue = hex("#45aaf2"),
+        red = hex("#fc5c65"),
+        yellow = hex("#fed330"),
+        bg = hex("#111111"),
+        tab_bg = hex("#0c0c0c"),
+        border = hex("#323034"),
+        text = hex("#5a5a5a"),
+        text_active = hex("#ffffff"),
+        text_hover = hex("#c8c8c8")
     }
-
-    function library:registerRGBBar(gradient_instance)
-        insert(rgb_bar_data.instances, gradient_instance)
-    end
-
-    task.spawn(function()
-        while rgb_bar_data.running do
-            local hue = (tick() * rgb_bar_data.speed) % 1
-            for _, gradient in ipairs(rgb_bar_data.instances) do
-                if gradient and gradient.Parent then
-                    gradient.Color = rgbseq{
-                        rgbkey(0, hsv((hue + 0) % 1, 1, 1)),
-                        rgbkey(0.17, hsv((hue + 0.17) % 1, 1, 1)),
-                        rgbkey(0.33, hsv((hue + 0.33) % 1, 1, 1)),
-                        rgbkey(0.5, hsv((hue + 0.5) % 1, 1, 1)),
-                        rgbkey(0.67, hsv((hue + 0.67) % 1, 1, 1)),
-                        rgbkey(0.83, hsv((hue + 0.83) % 1, 1, 1)),
-                        rgbkey(1, hsv((hue + 1) % 1, 1, 1))
-                    }
-                end
-            end
-            task.wait(0.03)
-        end
-    end)
 
     local keys = {
         [Enum.KeyCode.LeftShift] = "LS",
@@ -1546,7 +1528,7 @@
                     BackgroundColor3 = rgb(20, 20, 20)
                 })
                 
-                -- Gamesense RGB Bar
+                -- Skeet static RGB Bar (blue -> red -> yellow)
                 local rgb_bar_holder = library:create("Frame", {
                     Parent = background,
                     Name = "",
@@ -1558,28 +1540,23 @@
                     ZIndex = 10
                 })
                 
-                local rgb_gradient = library:create("UIGradient", {
+                library:create("UIGradient", {
                     Parent = rgb_bar_holder,
                     Name = "",
+                    Rotation = 100,
                     Color = rgbseq{
-                        rgbkey(0, rgb(255, 0, 0)),
-                        rgbkey(0.17, rgb(255, 255, 0)),
-                        rgbkey(0.33, rgb(0, 255, 0)),
-                        rgbkey(0.5, rgb(0, 255, 255)),
-                        rgbkey(0.67, rgb(0, 0, 255)),
-                        rgbkey(0.83, rgb(255, 0, 255)),
-                        rgbkey(1, rgb(255, 0, 0))
+                        rgbkey(0, skeet_colors.blue),
+                        rgbkey(0.5, skeet_colors.red),
+                        rgbkey(1, skeet_colors.yellow)
                     }
                 })
-                
-                library:registerRGBBar(rgb_gradient)
                 
                 local title_holder = library:create("Frame", {
                     Parent = background,
                     Name = "",
                     BackgroundTransparency = 1,
                     BorderColor3 = rgb(0, 0, 0),
-                    Size = dim2(1, 0, 0, 26),
+                    Size = dim2(1, 0, 0, 24),
                     Position = dim2(0, 0, 0, 2),
                     BorderSizePixel = 0,
                     BackgroundColor3 = rgb(255, 255, 255)
@@ -1589,38 +1566,28 @@
                     Parent = title_holder,
                     Name = "",
                     FontFace = library.font,
-                    TextColor3 = rgb(200, 200, 200),
+                    TextColor3 = skeet_colors.text_active,
                     BorderColor3 = rgb(0, 0, 0),
                     Text = cfg.name,
-                    Size = dim2(1, 0, 0, 22),
+                    Size = dim2(1, 0, 0, 20),
                     BackgroundTransparency = 1,
                     TextXAlignment = Enum.TextXAlignment.Left,
                     BorderSizePixel = 0,
                     RichText = true,
-                    TextSize = 12,
+                    TextSize = 11,
                     BackgroundColor3 = rgb(255, 255, 255)
-                })
-                
-                -- Accent line below title
-                local accent_line = library:create("Frame", {
-                    Parent = title_holder,
-                    Name = "",
-                    Position = dim2(0, 0, 1, -3),
-                    BorderColor3 = rgb(0, 0, 0),
-                    Size = dim2(1, 0, 0, 1),
-                    BorderSizePixel = 0,
-                    BackgroundColor3 = rgb(60, 60, 60)
                 })
                 
                 cfg["tab_holder"] = library:create("Frame", {
                     Parent = background,
                     Name = "",
-                    BackgroundTransparency = 1,
-                    Position = dim2(0, 0, 0, 30),
-                    BorderColor3 = rgb(0, 0, 0),
-                    Size = dim2(0, 100, 1, -30),
-                    BorderSizePixel = 0,
-                    BackgroundColor3 = rgb(255, 255, 255)
+                    BackgroundTransparency = 0,
+                    Position = dim2(0, 0, 0, 26),
+                    BorderColor3 = skeet_colors.border,
+                    Size = dim2(0, 90, 1, -26),
+                    BorderSizePixel = 1,
+                    BackgroundColor3 = skeet_colors.tab_bg,
+                    ZIndex = 5
                 })
                 
                 library:create("UIListLayout", {
@@ -1634,9 +1601,9 @@
                 library:create("UIPadding", {
                     Parent = cfg["tab_holder"],
                     Name = "",
-                    PaddingTop = dim(0, 8),
-                    PaddingLeft = dim(0, 4),
-                    PaddingRight = dim(0, 4)
+                    PaddingTop = dim(0, 0),
+                    PaddingLeft = dim(0, 0),
+                    PaddingRight = dim(0, 0)
                 })
                 
                 library:create("UIPadding", {
@@ -1650,43 +1617,43 @@
                 local page_holder = library:create("Frame", {
                     Parent = background,
                     Name = "",
-                    Position = dim2(0, 100, 0, 30),
-                    BorderColor3 = rgb(0, 0, 0),
-                    Size = dim2(1, -100, 1, -30),
+                    Position = dim2(0, 90, 0, 26),
+                    BorderColor3 = skeet_colors.bg,
+                    Size = dim2(1, -90, 1, -26),
                     BorderSizePixel = 0,
-                    BackgroundColor3 = rgb(30, 30, 30)
+                    BackgroundColor3 = skeet_colors.bg
                 })
                 
                 local inline = library:create("Frame", {
                     Parent = page_holder,
                     Name = "",
-                    Position = dim2(0, 1, 0, 1),
-                    BorderColor3 = rgb(40, 40, 40),
-                    Size = dim2(1, -2, 1, -2),
+                    Position = dim2(0, 0, 0, 0),
+                    BorderColor3 = skeet_colors.bg,
+                    Size = dim2(1, 0, 1, 0),
                     BorderSizePixel = 0,
-                    BackgroundColor3 = rgb(35, 35, 35)
+                    BackgroundColor3 = skeet_colors.bg
                 })
                 
                 cfg["page_holder"] = library:create("Frame", {
                     Parent = inline,
                     Name = "",
-                    Position = dim2(0, 1, 0, 1),
-                    BorderColor3 = rgb(0, 0, 0),
-                    Size = dim2(1, -2, 1, -2),
+                    Position = dim2(0, 0, 0, 0),
+                    BorderColor3 = skeet_colors.bg,
+                    Size = dim2(1, 0, 1, 0),
                     BorderSizePixel = 0,
-                    BackgroundColor3 = rgb(25, 25, 25)
+                    BackgroundColor3 = skeet_colors.bg
                 })
                 
                 -- Separator line between tabs and content
                 library:create("Frame", {
                     Parent = background,
                     Name = "",
-                    Position = dim2(0, 100, 0, 30),
-                    BorderColor3 = rgb(0, 0, 0),
-                    Size = dim2(0, 1, 1, -30),
+                    Position = dim2(0, 90, 0, 26),
+                    BorderColor3 = skeet_colors.border,
+                    Size = dim2(0, 1, 1, -26),
                     BorderSizePixel = 0,
-                    BackgroundColor3 = rgb(40, 40, 40),
-                    ZIndex = 2
+                    BackgroundColor3 = skeet_colors.border,
+                    ZIndex = 6
                 }) 
             -- 
 
@@ -1775,54 +1742,32 @@
                 name = properties.name or "visuals", 
             } 
 
-            -- tab button
-                local outline = library:create("TextButton", {
+            -- skeet style tab button
+                local tab_button = library:create("TextButton", {
                     Parent = self.tab_holder,
                     Name = "",
                     FontFace = library.font,
-                    TextColor3 = rgb(0, 0, 0),
-                    BorderColor3 = rgb(0, 0, 0),
-                    Text = "",
-                    AutoButtonColor = false,
-                    Size = dim2(1, -8, 0, 24),
-                    BorderSizePixel = 0,
-                    TextSize = 11,
-                    BackgroundColor3 = rgb(25, 25, 25)
-                })
-                
-                local inline = library:create("Frame", {
-                    Parent = outline,
-                    Name = "",
-                    Position = dim2(0, 1, 0, 1),
-                    BorderColor3 = rgb(0, 0, 0),
-                    Size = dim2(1, -2, 1, -2),
-                    BorderSizePixel = 0,
-                    BackgroundColor3 = rgb(35, 35, 35)
-                })
-                
-                local background = library:create("Frame", {
-                    Parent = inline,
-                    Name = "",
-                    Position = dim2(0, 1, 0, 1),
-                    BorderColor3 = rgb(0, 0, 0),
-                    Size = dim2(1, -2, 1, -2),
-                    BorderSizePixel = 0,
-                    BackgroundColor3 = rgb(28, 28, 28)
-                })
-                
-                local text = library:create("TextLabel", {
-                    Parent = background,
-                    Name = "",
-                    FontFace = library.font,
-                    TextColor3 = rgb(140, 140, 140),
-                    BorderColor3 = rgb(0, 0, 0),
+                    TextColor3 = skeet_colors.text,
+                    BorderColor3 = skeet_colors.border,
                     Text = cfg.name,
-                    BackgroundTransparency = 1,
-                    Position = dim2(0, 0, 0, 0),
-                    Size = dim2(1, 0, 1, 0),
+                    AutoButtonColor = false,
+                    Size = dim2(1, -1, 0, 28),
                     BorderSizePixel = 0,
                     TextSize = 11,
-                    BackgroundColor3 = rgb(255, 255, 255)
+                    BackgroundColor3 = skeet_colors.tab_bg,
+                    ZIndex = 5
+                })
+                
+                -- right border line
+                library:create("Frame", {
+                    Parent = tab_button,
+                    Name = "",
+                    Position = dim2(1, 0, 0, 0),
+                    BorderColor3 = skeet_colors.border,
+                    Size = dim2(0, 1, 1, 0),
+                    BorderSizePixel = 0,
+                    BackgroundColor3 = skeet_colors.border,
+                    ZIndex = 1
                 })
             -- 
 
@@ -1831,11 +1776,11 @@
                     Parent = self.page_holder,
                     Name = "",
                     Visible = false, 
-                    Position = dim2(0, 1, 0, 1),
-                    BorderColor3 = rgb(0, 0, 0),
-                    Size = dim2(1, -2, 1, -2),
+                    Position = dim2(0, 0, 0, 0),
+                    BorderColor3 = skeet_colors.bg,
+                    Size = dim2(1, 0, 1, 0),
                     BorderSizePixel = 0,
-                    BackgroundColor3 = rgb(25, 25, 25)
+                    BackgroundColor3 = skeet_colors.bg
                 })
                 
                 library:create("UIListLayout", {
@@ -1862,22 +1807,28 @@
                 library:closeCurrentElement() 
 
                 if self.selected_tab then 
-                    self.selected_tab[1].TextColor3 = rgb(140, 140, 140)
+                    -- reset previous tab to inactive state
+                    local prev_tab = self.selected_tab[1]
+                    prev_tab.TextColor3 = skeet_colors.text
+                    prev_tab.BackgroundColor3 = skeet_colors.tab_bg
+                    -- show right border
+                    prev_tab:GetChildren()[1].Visible = true
+                    
                     self.selected_tab[2].Visible = false 
-                    self.selected_tab[3].BackgroundColor3 = rgb(28, 28, 28)
-                    self.selected_tab[4].BackgroundColor3 = rgb(35, 35, 35)
-
                     self.selected_tab = nil 
                 end 
 
-                text.TextColor3 = rgb(255, 255, 255)
+                -- set active tab style
+                tab_button.TextColor3 = skeet_colors.text_active
+                tab_button.BackgroundColor3 = skeet_colors.bg
+                -- hide right border for active tab (merged look)
+                tab_button:GetChildren()[1].Visible = false
+                
                 cfg["page"].Visible = true 
-                background.BackgroundColor3 = rgb(35, 35, 35)
-                inline.BackgroundColor3 = rgb(45, 45, 45)
-                self.selected_tab = {text, cfg["page"], background, inline}
+                self.selected_tab = {tab_button, cfg["page"]}
             end 
 
-            outline.MouseButton1Down:Connect(function()
+            tab_button.MouseButton1Down:Connect(function()
                 cfg.open_tab()
             end)
 
@@ -1920,76 +1871,27 @@
                 size = properties.size or properties.Size or dim2(1, 0, 1, -12)
             }   
 
-            -- Instances
-                local outline = library:create("Frame", {
+            -- Skeet style section - simple single frame
+                local section_frame = library:create("Frame", {
                     Parent = self.column,
                     Name = "",
-                    BorderColor3 = rgb(0, 0, 0),
+                    BorderColor3 = skeet_colors.border,
                     Size = self.fill and dim2(1, 0, 0, 0) or cfg.size,
-                    BorderSizePixel = 0,
-                    BackgroundColor3 = rgb(30, 30, 30)
-                })
-                
-                local inline = library:create("Frame", {
-                    Parent = outline,
-                    Name = "",
-                    Position = dim2(0, 1, 0, 1),
-                    BorderColor3 = rgb(0, 0, 0),
-                    Size = dim2(1, -2, 1, -2),
-                    BorderSizePixel = 0,
-                    BackgroundColor3 = rgb(40, 40, 40)
-                })
-                
-                local background = library:create("Frame", {
-                    Parent = inline,
-                    Name = "",
-                    Position = dim2(0, 1, 0, 1),
-                    BorderColor3 = rgb(0, 0, 0),
-                    Size = dim2(1, -2, 1, -2),
-                    BorderSizePixel = 0,
-                    BackgroundColor3 = rgb(22, 22, 22)
-                })
-
-                local scrollbar_fill = library:create("Frame", {
-                    Parent = background,
-                    Name = "",
-                    Visible = false, 
-                    Size = dim2(0, 5, 1, 0),
-                    Position = dim2(1, -5, 0, 0),
-                    BorderColor3 = rgb(0, 0, 0),
-                    ZIndex = 4,
-                    BorderSizePixel = 0,
-                    BackgroundColor3 = rgb(50, 50, 50)
-                })
-                
-                local shadow = library:create("Frame", {
-                    Parent = background,
-                    Name = "",
-                    Size = dim2(1, -5, 0, 21),
-                    Position = dim2(0, 0, 1, -21),
-                    BorderColor3 = rgb(0, 0, 0),
-                    ZIndex = 999,
-                    BorderSizePixel = 0,
-                    BackgroundColor3 = rgb(22, 22, 22)
-                })
-                
-                local UIGradient = library:create("UIGradient", {
-                    Parent = shadow,
-                    Name = "",
-                    Rotation = -90,
-                    Transparency = numseq{numkey(0, 0), numkey(1, 1)}
+                    BorderSizePixel = 1,
+                    BackgroundColor3 = skeet_colors.bg
                 })
                 
                 local elements_scroll = library:create("ScrollingFrame", {
-                    Parent = background,
+                    Parent = section_frame,
                     Name = "",
                     ScrollBarImageColor3 = rgb(80, 80, 80),
                     Active = true,
                     AutomaticCanvasSize = Enum.AutomaticSize.Y,
-                    ScrollBarThickness = 3,
+                    ScrollBarThickness = 2,
                     BorderColor3 = rgb(0, 0, 0),
                     BackgroundTransparency = 1,
-                    Size = dim2(1, 0, 1, 0),
+                    Size = dim2(1, -4, 1, -4),
+                    Position = dim2(0, 2, 0, 2),
                     BackgroundColor3 = rgb(255, 255, 255),
                     ZIndex = 5,
                     BorderSizePixel = 0,
@@ -2026,39 +1928,26 @@
                 })
                 
                 local section_title = library:create("TextLabel", {
-                    Parent = outline,
+                    Parent = section_frame,
                     Name = "",
                     FontFace = library.font,
-                    TextColor3 = rgb(220, 220, 220),
+                    TextColor3 = skeet_colors.text_active,
                     BorderColor3 = rgb(0, 0, 0),
                     Text = cfg.name,
                     AutomaticSize = Enum.AutomaticSize.XY,
                     AnchorPoint = vec2(0, 0.5),
-                    Position = dim2(0, 14, 0, 3),
+                    Position = dim2(0, 10, 0, 2),
                     BackgroundTransparency = 1,
                     TextXAlignment = Enum.TextXAlignment.Left,
                     BorderSizePixel = 0,
                     ZIndex = 2,
-                    TextSize = 11,
-                    BackgroundColor3 = rgb(22, 22, 22)
-                })
-
-                local section_filler = library:create("Frame", {
-                    Parent = outline,
-                    Name = "",
-                    AnchorPoint = vec2(0, 0.5),
-                    Position = dim2(0, 13, 0, 1),
-                    BorderColor3 = rgb(0, 0, 0),
-                    Size = dim2(0, section_title.TextBounds.X, 0, 3),
-                    BorderSizePixel = 0,
-                    BackgroundColor3 = rgb(22, 22, 22)
+                    TextSize = 10,
+                    BackgroundColor3 = skeet_colors.bg
                 })
             -- 
 
             -- Connections 
-                elements_scroll:GetPropertyChangedSignal("AbsoluteCanvasSize"):Connect(function()
-                    scrollbar_fill.Visible = elements_scroll.AbsoluteCanvasSize.Y > background.AbsoluteSize.Y and true or false 
-                end)
+                -- scrollbar visibility handled by scroller automatically
             -- 
 
             return setmetatable(cfg, library)
