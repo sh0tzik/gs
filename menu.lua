@@ -1616,9 +1616,9 @@
                     Parent = background,
                     Name = "",
                     BackgroundTransparency = 1,
-                    Position = dim2(0, 0, 0, 28),
+                    Position = dim2(0, 0, 0, 30),
                     BorderColor3 = rgb(0, 0, 0),
-                    Size = dim2(1, 0, 0, 28),
+                    Size = dim2(0, 100, 1, -30),
                     BorderSizePixel = 0,
                     BackgroundColor3 = rgb(255, 255, 255)
                 })
@@ -1626,26 +1626,33 @@
                 library:create("UIListLayout", {
                     Parent = cfg["tab_holder"],
                     Name = "",
-                    FillDirection = Enum.FillDirection.Horizontal,
-                    HorizontalFlex = Enum.UIFlexAlignment.Fill,
-                    Padding = dim(0, -1),
+                    FillDirection = Enum.FillDirection.Vertical,
+                    Padding = dim(0, 2),
                     SortOrder = Enum.SortOrder.LayoutOrder
+                })
+                
+                library:create("UIPadding", {
+                    Parent = cfg["tab_holder"],
+                    Name = "",
+                    PaddingTop = dim(0, 8),
+                    PaddingLeft = dim(0, 4),
+                    PaddingRight = dim(0, 4)
                 })
                 
                 library:create("UIPadding", {
                     Parent = background,
                     Name = "",
-                    PaddingBottom = dim(0, 11),
-                    PaddingRight = dim(0, 9),
-                    PaddingLeft = dim(0, 9)
+                    PaddingBottom = dim(0, 0),
+                    PaddingRight = dim(0, 0),
+                    PaddingLeft = dim(0, 0)
                 })
                 
                 local page_holder = library:create("Frame", {
                     Parent = background,
                     Name = "",
-                    Position = dim2(0, 0, 0, 58),
+                    Position = dim2(0, 100, 0, 30),
                     BorderColor3 = rgb(0, 0, 0),
-                    Size = dim2(1, 0, 1, -58),
+                    Size = dim2(1, -100, 1, -30),
                     BorderSizePixel = 0,
                     BackgroundColor3 = rgb(30, 30, 30)
                 })
@@ -1668,6 +1675,18 @@
                     Size = dim2(1, -2, 1, -2),
                     BorderSizePixel = 0,
                     BackgroundColor3 = rgb(25, 25, 25)
+                })
+                
+                -- Separator line between tabs and content
+                library:create("Frame", {
+                    Parent = background,
+                    Name = "",
+                    Position = dim2(0, 100, 0, 30),
+                    BorderColor3 = rgb(0, 0, 0),
+                    Size = dim2(0, 1, 1, -30),
+                    BorderSizePixel = 0,
+                    BackgroundColor3 = rgb(40, 40, 40),
+                    ZIndex = 2
                 }) 
             -- 
 
@@ -1765,9 +1784,9 @@
                     BorderColor3 = rgb(0, 0, 0),
                     Text = "",
                     AutoButtonColor = false,
-                    Size = dim2(0, 0, 0, 28),
+                    Size = dim2(1, -8, 0, 24),
                     BorderSizePixel = 0,
-                    TextSize = 12,
+                    TextSize = 11,
                     BackgroundColor3 = rgb(25, 25, 25)
                 })
                 
